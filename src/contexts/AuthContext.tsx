@@ -11,8 +11,9 @@ const initialState: AuthState = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+type AuthProviderProps = { children: ReactNode };
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [auth, setAuth] = useState<AuthState>(initialState);
 
   useEffect(() => {
@@ -132,3 +133,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+export { AuthProvider };
