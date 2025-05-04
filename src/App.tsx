@@ -67,7 +67,7 @@ function App() {
                   <span className="font-bold text-lg">CivicSync</span>
                 </div>
                 <div className="text-sm text-teal-100">
-                  © {new Date().getFullYear()} CivicSync. All rights reserved.
+                  © {new Date().getFullYear()} CivicSync. All rights reserved. Built by Prathyu Prasad.
                 </div>
               </div>
             </div>
