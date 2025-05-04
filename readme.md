@@ -3,6 +3,7 @@
 This is the user interface for the CivicSync application, allowing users to interact with the CivicSync backend API to report, view, and manage community issues.
 
 Built with React, TypeScript, Vite, Tailwind CSS, and React Leaflet.
+[Backend:](https://github.com/prathyu116/CivicSync-server) 
 
 ## Features
 
