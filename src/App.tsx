@@ -28,33 +28,33 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/issue/:id" element={<IssueDetailsPage />} />
-              
+
               {/* Protected Routes */}
-              <Route 
-                path="/report" 
+              <Route
+                path="/report"
                 element={
                   <ProtectedRoute>
                     <ReportIssuePage />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/my-issues" 
+              <Route
+                path="/my-issues"
                 element={
                   <ProtectedRoute>
                     <MyIssuesPage />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/issue/:id/edit" 
+              <Route
+                path="/issue/:id/edit"
                 element={
                   <ProtectedRoute>
                     <EditIssuePage />
                   </ProtectedRoute>
-                } 
+                }
               />
-              
+
               {/* Fallback route */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -67,7 +67,15 @@ function App() {
                   <span className="font-bold text-lg">CivicSync</span>
                 </div>
                 <div className="text-sm text-teal-100">
-                  © {new Date().getFullYear()} CivicSync. All rights reserved. Built by Prathyu Prasad.
+                  © {new Date().getFullYear()} CivicSync. All rights reserved. Built by Built by{" "}
+                  <a
+                    href="https://github.com/prathyu116"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-teal-300"
+                  >
+                    Prathyu Prasad
+                  </a>.
                 </div>
               </div>
             </div>
