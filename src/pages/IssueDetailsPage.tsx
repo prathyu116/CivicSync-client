@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   AlertTriangle, MapPin, Calendar, Clock, Tag, User, ThumbsUp,
-  ArrowLeft, Loader, Edit, Send, PlayCircle, CheckCircle // <-- Import new icons
-} from 'lucide-react'; // <-- Added Send, PlayCircle, CheckCircle
+  ArrowLeft, Loader, Edit, Send, PlayCircle, CheckCircle 
+} from 'lucide-react'; 
 import { format } from 'date-fns';
 import MapView from '../components/MapView';
-import { fetchIssueById, voteForIssue, updateIssueStatus } from '../services/api'; // <-- Import updateIssueStatus
+import { fetchIssueById, voteForIssue, updateIssueStatus } from '../services/api'; 
 import { STATUS_COLORS } from '../config';
 import { Issue } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,7 +16,7 @@ const IssueDetailsPage: React.FC = () => {
   const [issue, setIssue] = useState<Issue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false); // <-- New state for status update loading
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false); 
   const { auth } = useAuth();
 
   const loadIssue = async () => {
@@ -42,38 +42,34 @@ const IssueDetailsPage: React.FC = () => {
     if (hasVoted) return;
 
     try {
-      // Use the full issue object for immediate update
       const updatedIssue = await voteForIssue(id);
-      setIssue(updatedIssue); // Use the returned issue data directly
+      setIssue(updatedIssue); 
     } catch (err: any) {
       setError(err.message || 'Failed to vote for issue');
     }
   };
 
-  // --- New function to handle status updates ---
   const handleStatusUpdate = async (newStatus: 'In Progress' | 'Resolved') => {
     if (!id || !auth.user || !issue || !isAuthor || issue.status === newStatus || isUpdatingStatus) return;
 
-    // Basic check to prevent setting back from Resolved
     if (issue.status === 'Resolved' && newStatus === 'In Progress') {
         setError('Cannot revert status from Resolved.');
         return;
     }
 
     setIsUpdatingStatus(true);
-    setError(null); // Clear previous errors
+    setError(null); 
 
     try {
       const updatedIssue = await updateIssueStatus(id, newStatus);
       console.log("djdj",updateIssueStatus)
-      setIssue(updatedIssue); // Update local state with the response from the API
+      setIssue(updatedIssue); 
     } catch (err: any) {
       setError(err.response?.data?.message || `Failed to update status to ${newStatus}`);
     } finally {
       setIsUpdatingStatus(false);
     }
   };
-  // --- End of new function ---
 
   useEffect(() => {
     loadIssue();
@@ -99,7 +95,6 @@ const IssueDetailsPage: React.FC = () => {
               <div className="ml-3">
                 <p className="text-sm text-red-700">{error || 'Issue not found'}</p>
               </div>
-              {/* Optional: Add dismiss button for errors */}
             </div>
           </div>
 
@@ -137,7 +132,6 @@ const IssueDetailsPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* --- Display Error Messages Specifically for Updates --- */}
         {error && (
              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                <div className="flex">
@@ -162,7 +156,6 @@ const IssueDetailsPage: React.FC = () => {
                </div>
              </div>
            )}
-        {/* --- End Error Display --- */}
 
 
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -211,9 +204,8 @@ const IssueDetailsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* --- Updated Controls Section --- */}
               <div className="flex flex-col space-y-3">
-                 <div className="bg-gray-50 p-4 rounded-lg mb-1"> {/* Reduced mb */}
+                 <div className="bg-gray-50 p-4 rounded-lg mb-1"> 
                    <h3 className="font-medium text-gray-900 mb-2">Issue Location</h3>
                    <div className="flex items-center text-sm text-gray-600 mb-3">
                      <MapPin className="w-4 h-4 mr-2 text-teal-600" />
@@ -221,6 +213,7 @@ const IssueDetailsPage: React.FC = () => {
                        {issue.location.address ||
                          `${issue.location.lat.toFixed(6)}, ${issue.location.lng.toFixed(6)}`}
                      </span>
+                     
                    </div>
                  </div>
 
@@ -228,7 +221,7 @@ const IssueDetailsPage: React.FC = () => {
                    <div className="space-y-3">
                      <button
                        onClick={handleVote}
-                       disabled={hasVoted || isUpdatingStatus} // Also disable during status update
+                       disabled={hasVoted || isUpdatingStatus} 
                        className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-colors ${
                          hasVoted
                            ? 'bg-indigo-100 text-indigo-600 cursor-default'
@@ -240,7 +233,6 @@ const IssueDetailsPage: React.FC = () => {
                        <span className="font-semibold ml-1">({issue.votes})</span>
                      </button>
 
-                     {/* --- Author Controls: Edit & Status Update --- */}
                      {isAuthor && (
                          <>
                            {issue.status === 'Pending' && (
@@ -254,8 +246,7 @@ const IssueDetailsPage: React.FC = () => {
                               </Link>
                            )}
 
-                          {/* Status Update Buttons */}
-                          {issue.status !== 'Resolved' && ( // Show buttons only if not Resolved
+                          {issue.status !== 'Resolved' && ( 
                              <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                                {issue.status === 'Pending' && (
                                 <button
@@ -267,7 +258,7 @@ const IssueDetailsPage: React.FC = () => {
                                   <span>Mark as In Progress</span>
                                 </button>
                                )}
-                               {issue.status !== 'Resolved' && ( // Also show Resolve if Pending or In Progress
+                               {issue.status !== 'Resolved' && ( 
                                 <button
                                   onClick={() => handleStatusUpdate('Resolved')}
                                   disabled={isUpdatingStatus}
@@ -279,13 +270,11 @@ const IssueDetailsPage: React.FC = () => {
                                )}
                              </div>
                           )}
-                          {/* End Status Update Buttons */}
                          </>
                      )}
                    </div>
                  )}
               </div>
-               {/* --- End Updated Controls Section --- */}
 
             </div>
 

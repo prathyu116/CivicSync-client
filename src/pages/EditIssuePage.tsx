@@ -191,7 +191,7 @@ const EditIssuePage: React.FC = () => {
             <select
               id="category"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategory(e.target.value as any)}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select a category</option>

@@ -33,7 +33,6 @@ const RegisterPage: React.FC = () => {
       await register(name, email, password);
       navigate('/');
     } catch (error) {
-      // Error is handled in the context
     }
   };
 

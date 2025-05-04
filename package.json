@@ -3,25 +3,17 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "server": "node server/server.js",
-    "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
-    "build": "tsc && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+ "scripts": {
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "lint": "eslint ."
+},
   "dependencies": {
     "axios": "^1.6.7",
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
     "date-fns": "^3.4.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.344.0",
-    "mongoose": "^8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.49.3",

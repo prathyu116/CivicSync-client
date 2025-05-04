@@ -1,8 +1,7 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+export const API_URL = import.meta.env.VITE_API_URL 
 
-export const DEFAULT_MAP_CENTER = { lat: 40.7128, lng: -74.0060 }; // New York City
-export const DEFAULT_MAP_ZOOM = 13;
-
+export const DEFAULT_MAP_CENTER = { lat: 22.5937, lng: 78.9629 }; // India
+export const DEFAULT_MAP_ZOOM = 5; 
 export const CATEGORIES = [
   'Infrastructure',
   'Safety',

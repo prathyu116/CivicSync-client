@@ -21,7 +21,6 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // e.preventDefault();
     const success = await login(email, password);
     if (success) {
       navigate(from, { replace: true });

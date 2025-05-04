@@ -56,7 +56,6 @@ const MyIssuesPage: React.FC = () => {
       setIssues(prev => prev.filter(issue => issue._id !== id));
       setSuccessMessage('Issue deleted successfully');
       
-      // Auto dismiss after 5 seconds
       setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);

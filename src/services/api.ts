@@ -2,12 +2,10 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import { Issue } from '../types';
 
-// Create axios instance with base URL
 const api = axios.create({
   baseURL: API_URL
 });
 
-// Add request interceptor to add auth token to all requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -26,7 +24,6 @@ export const fetchIssues = async (page = 1, limit = 6, category?: string, status
   if (status) url += `&status=${status}`;
   
   const response = await api.get(url);
-  console.log("-------->",response.data)
   return response.data;
 };
 
@@ -60,14 +57,9 @@ export const fetchMyIssues = async () => {
   const response = await api.get('/api/users/my-issues');
   return response.data;
 };
-// Add this function inside src/services/api.ts
 
-// export const updateIssueStatus = async (id: string, status: 'In Progress' | 'Resolved'): Promise<Issue> => {
-//   const response = await api.put<Issue>(`/api/issues/${id}/status`, { status });
-//   return response.data;
-// };
 export const updateIssueStatus = async (id: string, status: 'In Progress' | 'Resolved') => {
   const response = await api.patch(`/api/issues/${id}/status`, { status });
-  return response.data as Issue; // Type the return data as Issue
+  return response.data as Issue; 
 };
 export default api;

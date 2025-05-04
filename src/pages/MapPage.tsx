@@ -18,7 +18,6 @@ const MapPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       
-      // Load more issues for the map view (50 instead of 10)
       const result = await fetchIssues(1, 50, category, status);
       setIssues(result.items);
     } catch (err: any) {

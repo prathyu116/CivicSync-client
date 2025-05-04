@@ -1,61 +1,53 @@
-// src/pages/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader, Filter, AlertTriangle, RefreshCw } from 'lucide-react';
 import IssueCard from '../components/IssueCard';
-import { fetchIssues, voteForIssue } from '../services/api'; // Make sure fetchIssues returns the new structure { items: Issue[], ... }
+import { fetchIssues, voteForIssue } from '../services/api'; 
 import { CATEGORIES } from '../config';
-import { Issue } from '../types'; // Ensure Issue type matches backend
+import { Issue } from '../types'; 
 import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
   const [issues, setIssues] = useState<Issue[]>([]);
-  // Filtered issues can be derived or set simultaneously. Let's simplify for now
-  // const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
+  
   const [isLoading, setIsLoading] = useState(true);
-  const [isVoting, setIsVoting] = useState<Record<string, boolean>>({}); // Track voting state per issue
+  const [isVoting, setIsVoting] = useState<Record<string, boolean>>({}); 
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [totalIssues, setTotalIssues] = useState(0); // Store total for better feedback
+  const [totalIssues, setTotalIssues] = useState(0); 
   const [category, setCategory] = useState<string>('');
   const [status, setStatus] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
   const { auth } = useAuth();
 
-  const ITEMS_PER_PAGE = 6; // Define limit centrally
+  const ITEMS_PER_PAGE = 6; 
 
   const loadIssues = async (reset = false) => {
     setIsLoading(true);
-    setError(null); // Clear previous errors
+    setError(null); 
 
     const currentPage = reset ? 1 : page;
 
     try {
-      // fetchIssues should return { items: Issue[], total: number, page: number, totalPages: number, hasMore: boolean }
       const result = await fetchIssues(currentPage, ITEMS_PER_PAGE, category, status);
 
-      const newIssues = result.items || []; // Ensure it's always an array
+      const newIssues = result.items || []; 
 
       if (reset) {
         setIssues(newIssues);
-        setTotalIssues(result.total || 0); // Update total count
-        setPage(1); // Explicitly set page to 1 on reset
+        setTotalIssues(result.total || 0); 
+        setPage(1);
       } else {
-        // Append new issues, preventing duplicates (though backend pagination should handle this)
         setIssues(prev => [...prev, ...newIssues]);
-        // Don't reset total here
       }
 
-      // Use the hasMore flag directly from the backend!
       setHasMore(result.hasMore !== undefined ? result.hasMore : false);
 
-      // Increment page number ONLY if we just loaded more (not on reset) AND if there is potentially more
-      // Backend 'hasMore' is the best indicator. We advance the page *number* for the *next* potential load.
+      
       if (!reset && newIssues.length > 0) {
            setPage(prev => prev + 1);
       } else if (reset) {
-            // If resetting, set page for the next load based on hasMore
            setPage(newIssues.length > 0 && result.hasMore ? 2 : 1);
       }
 
@@ -63,9 +55,9 @@ const HomePage: React.FC = () => {
     } catch (err: any) {
       console.error("Error loading issues:", err);
       setError(err?.response?.data?.message || err.message || 'Failed to load issues');
-      setHasMore(false); // Stop loading more on error
+      setHasMore(false); 
       if (reset) {
-        setIssues([]); // Clear issues on error during reset
+        setIssues([]); 
         setTotalIssues(0);
       }
     } finally {
@@ -74,65 +66,56 @@ const HomePage: React.FC = () => {
   };
 
   const handleVote = async (id: string) => {
-    if (!auth.user || isVoting[id]) return; // Prevent double voting while processing
+    if (!auth.user || isVoting[id]) return; 
 
     setIsVoting(prev => ({ ...prev, [id]: true }));
-    setError(null); // Clear previous errors
-
+    setError(null);
     try {
-      // Assume voteForIssue now returns the updated Issue object from backend
       const updatedIssueFromApi = await voteForIssue(id);
 
       setIssues(prev =>
         prev.map(issue =>
           issue._id === id
-            ? { ...updatedIssueFromApi } // Use the fresh data from API
+            ? { ...updatedIssueFromApi } 
             : issue
         )
       );
-       // Also update filtered issues if you use separate state
-      // setFilteredIssues(...)
+       
 
     } catch (err: any) {
         console.error("Vote error:", err);
-        // Prioritize backend error message
         const backendError = err?.response?.data?.message;
         setError(backendError || err.message || 'Failed to vote for issue');
 
-        // Optionally revert optimistic update here if you did one
     } finally {
         setIsVoting(prev => ({ ...prev, [id]: false }));
     }
   };
 
   const applyFilters = () => {
-    loadIssues(true); // Pass true to reset pagination and issues
+    loadIssues(true); 
   };
 
   const clearFilters = () => {
     setCategory('');
     setStatus('');
     setShowFilters(false);
-    loadIssues(true); // Pass true to reset
+    loadIssues(true); 
   };
 
-  // Initial load effect
   useEffect(() => {
-    loadIssues(true); // Initial load always resets
-  }, []); // Runs only once on mount
+    loadIssues(true); 
+  }, []); 
 
-  // Re-derive filteredIssues whenever issues, category, or status change if not done in loadIssues
-  // For simplicity, we're assuming loadIssues with filters does the job
-  const filteredIssues = issues; // In this version, loadIssues updates the main 'issues' state
+  
+  const filteredIssues = issues; 
 
 
-  // Display Logic: Use `issues` state directly since loadIssues filters it
   const issuesToShow = issues;
 
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* ... (Header, Filter Button, Report Button) ... */}
        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Community Issues</h1>
@@ -146,7 +129,6 @@ const HomePage: React.FC = () => {
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
-            {/* Indicate if filters are active? */}
             {(category || status) && <span className="ml-1 w-2 h-2 bg-blue-500 rounded-full"></span>}
           </button>
 
@@ -163,10 +145,8 @@ const HomePage: React.FC = () => {
       </div>
 
 
-      {/* ... (Filter Panel - remains the same) ... */}
       {showFilters && (
          <div className="bg-white p-4 rounded-lg shadow-md mb-6 animate-fadeIn">
-            {/* ... Filter controls ... */}
              <h2 className="text-lg font-semibold mb-4">Filter Issues</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
@@ -222,7 +202,6 @@ const HomePage: React.FC = () => {
       )}
 
 
-      {/* ... (Error Display - remains the same) ... */}
        {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
              <div className="flex">
@@ -235,7 +214,7 @@ const HomePage: React.FC = () => {
                 <div className="ml-auto pl-3">
                       <div className="-mx-1.5 -my-1.5">
                          <button
-                          onClick={() => loadIssues(true)} // Retry clears errors and reloads page 1
+                          onClick={() => loadIssues(true)} 
                           title="Retry Loading Issues"
                           className="inline-flex rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none"
                         >
@@ -256,9 +235,8 @@ const HomePage: React.FC = () => {
           </div>
         )}
 
-      {/* --- CONDITION TO CHECK DATA --- */}
-      {/* Check after loading finishes and there's no error, OR if still loading initial data */}
-      {!isLoading && !error && issuesToShow.length === 0 ? ( // Check the derived/correct state
+     
+      {!isLoading && !error && issuesToShow.length === 0 ? ( 
         <div className="bg-gray-50 rounded-lg p-8 text-center">
           <AlertTriangle className="h-12 w-12 mx-auto text-amber-500 mb-4" />
           <h3 className="text-xl font-medium text-gray-900 mb-2">No issues found</h3>
@@ -279,20 +257,17 @@ const HomePage: React.FC = () => {
           )}
         </div>
       ) : (
-        // Only render grid if there are issues or if it's the initial load
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {issuesToShow.map((issue) => ( // Render the correct state
+          {issuesToShow.map((issue) => ( 
             <IssueCard
               key={issue._id}
               issue={issue}
               onVote={handleVote}
-              // Add disabled state based on isVoting if desired in IssueCard
-              // isDisabled={isVoting[issue._id]}
+            
             />
           ))}
-          {/* Placeholder for loading more items */}
           {isLoading && page > 1 && (
-              [...Array(3)].map((_, index) => ( // Show a few loading placeholders
+              [...Array(3)].map((_, index) => ( 
                   <div key={`loading-${index}`} className="bg-white rounded-lg shadow-md p-5 animate-pulse">
                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                      <div className="h-3 bg-gray-200 rounded w-full mb-4"></div>
@@ -308,27 +283,23 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-       {/* --- ADJUSTED Load More Button Condition --- */}
-       {/* Show button only if loading is NOT active AND hasMore is true */}
+      
       {!isLoading && hasMore && (
         <div className="mt-8 text-center">
           <button
-            onClick={() => loadIssues()} // Load next page
-            // Disable should ideally not be needed if !isLoading covers it
+            onClick={() => loadIssues()} 
             className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors disabled:opacity-50"
           >
              Load More Issues
           </button>
         </div>
       )}
-      {/* Optional: Indicate end of list */}
       {!isLoading && !hasMore && issuesToShow.length > 0 && (
           <div className="mt-8 text-center text-gray-500">
-             End of issues.
+             {/* End of issues. */}
           </div>
       )}
 
-       {/* Display initial loading spinner */}
        {isLoading && issues.length === 0 && (
              <div className="flex justify-center items-center py-12">
               <Loader className="w-8 h-8 text-teal-600 animate-spin" />
